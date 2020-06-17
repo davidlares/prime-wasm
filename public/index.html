@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <meta charset="utf-8">
+   <title> WASM Demo </title>
+ </head>
+ <body>
+   <h1> Prime Number Checker (Benchmark performance)</h1>
+   <script src="prime.js"></script>
+   <script>
+      // number to check: 0 - primes
+      const primes = 100
+      const isPrime = num => {
+        for(let i = 2; i < num; i++) {
+          if(num % i === 0) return false
+        }
+        return num !== 1 && num !== 0
+      }
+      // checking performance
+      const checkPrimes = num => {
+        let count = 0;
+        for(let i = 0; i < num; i++) {
+          if(isPrime(i)) count++
+        }
+        return count
+      }
+      // check bouth and WASM is ready
+      Module['onRuntimeInitialized'] = () => {
+        // check JS
+        let jsStart = performance.now()
+        let jsPrimes = checkPrimes(primes)
+        console.log('JS ', jsPrimes, Math.round(performance.now() - jsStart) / 1000)
+
+        // check C
+        let cStart = performance.now()
+        let cPrimes = _checkPrimes(primes)
+        console.log('C ', cPrimes, Math.round(performance.now() - cStart) / 1000)
+      }
+      // console.log(checkPrimes(primes))
+   </script>
+ </body>
+</html>
